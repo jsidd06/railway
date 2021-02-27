@@ -5,6 +5,8 @@ const https = require('https');
 const ejs = require('ejs');
 const app = express();
 const mongoose = require('mongoose');
+const md5 = require('md5');
+
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static('public'));
@@ -62,11 +64,12 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
+     
     const userData = {
         firstName: req.body.firstname,
         lastName: req.body.lastname,
         username: req.body.username,
-        password: req.body.password
+        password: md5(req.body.password)
     }
 
     const user = new User(userData)
@@ -84,7 +87,7 @@ app.post('/login', (req, res) => {
         if(!err){
             if(user){
                 // user found
-                if(user.password === req.body.password){
+                if(user.password === md5(req.body.password)){
                     //valid credentials found
                     // now log in the user
                     res.redirect('/status')
