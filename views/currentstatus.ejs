@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style1.css">
+    <title>Railway Gateway</title>
+</head>
+<body>
+
+    <% if(currentStatus.ResponseCode == 200) { %>
+
+    <div style="text-align:center">
+        <h1>Train Number : <%= currentStatus.TrainNumber %></h1>
+        <h1>Start Date : <%= currentStatus.StartDate %></h1>
+        <% if(currentStatus.CurrentStation) {%>
+        <h1>Current Station Name : <%= currentStatus.CurrentStation.StationName %> </h1>
+        <% } %>
+    </div>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <td>Station</td>
+                    <td>Sch/Arrival</td>
+                    <td>Sch/Departure</td>
+                </tr>
+            </thead>
+            <tbody>
+                <% currentStatus.TrainRoute.map(route => { %>
+                <tr>
+                    <td><%= route.StationName %> </td>
+                    <td><%= route.ScheduleArrival %> </td>
+                    <td><%= route.ScheduleDeparture %> </td>
+                </tr>
+                <% })%>
+            </tbody>
+        </table>
+    </div>
+
+    <% } else { %>
+    <H1> Either date or train no is invalid %> </H1>
+    <% } %>
+
+</body>
+
+</html>

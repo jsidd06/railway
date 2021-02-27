@@ -1,0 +1,35 @@
+.container {
+    max-width: 80%;
+    margin: auto;
+}
+
+table {
+    margin-top: 3em;
+    min-width: 100%;
+    background-color: purple;
+    margin: auto;
+    color: #f1f1f1;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+thead {
+    background-color: teal;
+}
+
+thead>tr>td {
+    font-weight: bold;
+}
+
+td {
+    padding: 1em;
+}
+
+tr {
+    margin: .5em;
+}
+
+@media(max-width:720px) {
+    .container {
+        max-width: 99%;
+    }
+}
