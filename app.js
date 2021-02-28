@@ -165,6 +165,6 @@ app.post('/contact', (req, res) => {
     })
 })
 
-app.listen(3000, (req, res) => {
+app.listen(process.env.PORT || 3000, (req, res) => {
     console.log("server is ready to start")
 })
