@@ -5,17 +5,34 @@ const https = require('https');
 const ejs = require('ejs');
 const app = express();
 const mongoose = require('mongoose');
-const md5 = require('md5');
-const bcrypt = require('bcrypt');
+const session = require('express-session')
+const passport = require('passport')
+const passportLocalMongoose = require('passport-local-mongoose');
 
 
-app.use(bodyParser.urlencoded({extended:true}));
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
-mongoose.connect(process.env.DB_STRING,{
-    useNewUrlParser : true,
-    useUnifiedTopology : true
+app.use(session({
+    secret: 'mysecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie :{
+        secure:false
+    }
+}))
+
+// initialize session
+app.use(passport.initialize());
+app.use(passport.session());
+
+mongoose.connect(process.env.DB_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 })
 
 
@@ -26,6 +43,8 @@ const schema = new mongoose.Schema({
     lastName: String
 })
 
+schema.plugin(passportLocalMongoose)
+
 const contactSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
@@ -35,35 +54,52 @@ const contactSchema = new mongoose.Schema({
 const Message = mongoose.model("Message", contactSchema)
 
 
-const User = mongoose.model('User', schema) 
+const User = mongoose.model('User', schema)
 
-app.get('/status', (req, res) =>{
-    res.render('index');
+//
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser())
+
+app.get('/status', (req, res) => {
+    if(req.isAuthenticated()){
+        res.render('index');
+    }else{
+        res.redirect('/')
+    }
+    
 });
 
 
-app.post('/status', (req, res) =>{
+app.post('/status', (req, res) => {
+
     
-    const [year, month, day] = req.body.date.split('-')
+        const [year, month, day] = req.body.date.split('-')
 
-    const url = "https://indianrailapi.com/api/v2/livetrainstatus/apikey/a3e3bb72fd968a457c2b453055945fa7/trainnumber/"+req.body.train+"/date/"+year+month+day;
+        const url = "https://indianrailapi.com/api/v2/livetrainstatus/apikey/a3e3bb72fd968a457c2b453055945fa7/trainnumber/" + req.body.train + "/date/" + year + month + day;
 
-    https.get(url, function(response){
-        if(response.statusCode === 200){
-            response.on('data', function(data){
-                const jsonData = JSON.parse(data)
+        https.get(url, function (response) {
+            if (response.statusCode === 200) {
+                response.on('data', function (data) {
+                    const jsonData = JSON.parse(data)
 
-                 res.render('currentstatus', {currentStatus : jsonData})
-                
-                
-            })
+                    res.render('currentstatus', {
+                        currentStatus: jsonData
+                    })
 
-        } else if (response.statusCode === 404) {
-            console.log(`Your train number is not correct <a href='/'> Please input correct number </a>`);
-        } else {
-            console.log('there was an error');
-        } 
-    })
+
+                })
+
+            } else if (response.statusCode === 404) {
+                console.log(`Your train number is not correct <a href='/'> Please input correct number </a>`);
+            } else {
+                console.log('there was an error');
+            }
+        })
+    
+
+
 })
 
 app.get('/', (req, res) => {
@@ -74,72 +110,61 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    bcrypt.hash(req.body.password, 10, function(err, hash) {
-        new User({
-            firstName: req.body.firstname,
-            lastName: req.body.lastname,
-            username: req.body.username,
-            password: hash
-        }).save(function(err){
-            if(!err){
-                res.redirect('/')
-            }else{
-                res.send("there was an error please try again")
-            }
-        })
-    });
-    
+    User.register({
+        username: req.body.username,
+        firstName: req.body.firstname,
+        lastName: req.body.lastname
+    }, req.body.password, function (err, user) {
+        if (!err) {
+            // res.redirect
+            res.redirect('/')
+        } else {
+            res.send("there was an error registering")
+            console.log(err)
+        }
+    })
 })
 
 app.post('/login', (req, res) => {
-    User.findOne({username: req.body.username}, (err, user) => {
-        if(!err){
-            if(user){
-                // user found
-                bcrypt.compare(req.body.password, user.password, function(err, result) {
-                    if(!err){
-                        if(result){
-                            res.redirect('/status')
-                        }else{
-                            console.log('there was an error')
-                        }
-                    }else{
-                        console.log(err)
-                    }
-                });
-                
-            }else{
-                // user not found
-                res.send("user is not found")
-            }
-        }else{
+    const user = new User({
+        username: req.body.username,
+        password: req.body.password
+    })
+    req.login(user, function (err) {
+        if (!err) {
+            passport.authenticate('local')(req, res, () => {
+                res.redirect("/status")
+            })
+        } else {
             console.log(err)
         }
     })
 })
 
 
-
-app.get('/contact', function(req, res){
+app.get('/logout', (req, res) => {
+    req.logout()
+    res.redirect('/')
+})
+app.get('/contact', (req, res) => {
     res.render('contact')
 })
 
-app.post('/contact', function(req, res){
-    const message = new Message({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        message: req.body.message
-    })
-
-    message.save(function(err){
-        if(!err){
-            res.redirect('/status')
+app.post('/contact', (req, res) => {
+    new Message({
+        firstName:req.body.firstName,
+        lastName:req.body.lastName,
+        message:req.body.message
+    }).save(function (err){
+        if(!err) {
+            res.redirect("/status")
         }else{
-            res.send("there was an error, please try again")
+
+            console.log(err)
         }
     })
 })
 
-app.listen(3000, (req, res) =>{
-    console.log("server is ready to start");
-});
+app.listen(3000, (req, res) => {
+    console.log("server is ready to start")
+})
