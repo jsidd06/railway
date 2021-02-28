@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Railway Gateway</title>
+</head>
+
+<body>
+    <!-- navbar section  -->
+    <div class="topnav" id="myTopnav">
+        <a href="/status" class="active">Home</a>
+        <a href="/contact">Contact Us</a>
+        <a href="/logout">Logout</a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+          <i class="fa fa-bars"></i>
+        </a>
+      </div>
+    <!-- end navbar section -->
+    <div class="container">
+        <div class="train-status">
+           <div class="box box1">
+            <h1>Live Train Status</h1>
+            <form action="/status" method="POST">
+                <input type="number" name="train" placeholder="Enter Train Number" required> <br>
+                <input type="date" name="date" required><br>
+                <input type="submit" name="button">
+            </form>
+           </div>
+        </div>
+    </div>
+
+    
+    <div class="footer">
+        <h3>Welcome to Railway Gateway!</h3>
+        <p>Copyright</p>
+    </div>
+    <script src="rail.js"></script>
+</body>
+
+</html>

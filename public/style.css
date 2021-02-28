@@ -1,0 +1,131 @@
+* {
+    margin : 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+}
+body {
+  background-image: url("yes.jpg");
+}
+/* start navbar   */
+/* Add a black background color to the top navigation */
+.topnav {
+  background-color: aqua;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: rgba(40, 179, 40, 0.788);
+  color: black;
+}
+
+/* Add an active class to highlight the current page */
+/* .topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+} */
+
+/* Hide the link that should open and close the topnav on small screens */
+.topnav .icon {
+  display: none;
+}/* end navbar */
+.container {
+    max-width: 80%;
+    margin: auto;
+}
+/* start train status  */
+.train-status {
+    margin: 20px;
+    padding: 5em;
+    border: 1px solid green;
+    border-style: initial;
+    text-align: center;
+    background-color: aquamarine;
+    display:flex;
+    justify-content:space-evenly;
+    flex-wrap: wrap;
+    background-image: url("no.jpg");
+}
+
+.train-status .box{
+    margin: 1em auto;
+}
+.train-status input {
+    margin: 5px;
+    padding: 10px;
+    border: none;
+}
+.train-status input[type="submit"]{
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 7px;
+}
+.train-status h1 {
+    margin-top: 10px;
+    color: white;
+    margin-bottom : 10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+/* end train status */
+ .footer {
+    margin: 5px;
+    padding: 5px;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    color:white;
+}
+
+::-webkit-scrollbar{
+    width: 3px;
+}  
+
+::-webkit-scrollbar-track{
+    background: initial;
+}
+
+::-webkit-scrollbar-thumb{
+    background: #1abc9c;
+    border-radius: 50px;
+}
+/* When the screen is less than 600 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
+@media screen and (max-width: 600px) {
+    .topnav a:not(:first-child) {display: none;}
+    .topnav a.icon {
+      float: right;
+      display: block;
+    }
+  }
+  
+  /* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
+  @media screen and (max-width: 600px) {
+    .topnav.responsive {position: relative;}
+    .topnav.responsive a.icon {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .topnav.responsive a {
+      float: none;
+      display: block;
+      text-align: left;
+    }
+  }
