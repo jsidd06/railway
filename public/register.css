@@ -1,0 +1,35 @@
+* {
+    margin:0;
+    padding:0;
+    
+}
+body {
+    width: 100%;
+    margin: 20px;
+    text-align: center;
+    margin-top: 13em;
+    background-image: url("yes.jpg");
+}
+form h1 {
+   margin:10px;
+   font-family: Arial, Helvetica, sans-serif;
+   color: white;
+}
+form input {
+    margin: 8px;
+    padding:10px ;
+    border: none;
+    color: black;
+}
+form input[type="submit"]{
+    margin: 10px;
+    padding: 10px;
+    color: black;
+    border: none;
+}
+a{
+    margin: 10px;
+    padding: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+}

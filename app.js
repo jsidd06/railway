@@ -6,6 +6,7 @@ const ejs = require('ejs');
 const app = express();
 const mongoose = require('mongoose');
 const md5 = require('md5');
+const bcrypt = require('bcrypt');
 
 
 app.use(bodyParser.urlencoded({extended:true}));
@@ -24,6 +25,15 @@ const schema = new mongoose.Schema({
     firstName: String,
     lastName: String
 })
+
+const contactSchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
+    message: String
+})
+
+const Message = mongoose.model("Message", contactSchema)
+
 
 const User = mongoose.model('User', schema) 
 
@@ -64,22 +74,21 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-     
-    const userData = {
-        firstName: req.body.firstname,
-        lastName: req.body.lastname,
-        username: req.body.username,
-        password: md5(req.body.password)
-    }
-
-    const user = new User(userData)
-    user.save(function(err){
-        if(!err){
-            res.redirect('/')
-        }else{
-            res.send("there was an error please try again")
-        }
-    })
+    bcrypt.hash(req.body.password, 10, function(err, hash) {
+        new User({
+            firstName: req.body.firstname,
+            lastName: req.body.lastname,
+            username: req.body.username,
+            password: hash
+        }).save(function(err){
+            if(!err){
+                res.redirect('/')
+            }else{
+                res.send("there was an error please try again")
+            }
+        })
+    });
+    
 })
 
 app.post('/login', (req, res) => {
@@ -87,14 +96,17 @@ app.post('/login', (req, res) => {
         if(!err){
             if(user){
                 // user found
-                if(user.password === md5(req.body.password)){
-                    //valid credentials found
-                    // now log in the user
-                    res.redirect('/status')
-                }else{
-                    // credentials not valid
-                    res.send("password is invalid")
-                }
+                bcrypt.compare(req.body.password, user.password, function(err, result) {
+                    if(!err){
+                        if(result){
+                            res.redirect('/status')
+                        }else{
+                            console.log('there was an error')
+                        }
+                    }else{
+                        console.log(err)
+                    }
+                });
                 
             }else{
                 // user not found
@@ -110,6 +122,22 @@ app.post('/login', (req, res) => {
 
 app.get('/contact', function(req, res){
     res.render('contact')
+})
+
+app.post('/contact', function(req, res){
+    const message = new Message({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        message: req.body.message
+    })
+
+    message.save(function(err){
+        if(!err){
+            res.redirect('/status')
+        }else{
+            res.send("there was an error, please try again")
+        }
+    })
 })
 
 app.listen(3000, (req, res) =>{

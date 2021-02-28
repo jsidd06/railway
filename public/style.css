@@ -5,6 +5,9 @@
     list-style: none;
     box-sizing: border-box;
 }
+body {
+  background-image: url("yes.jpg");
+}
 /* start navbar   */
 /* Add a black background color to the top navigation */
 .topnav {
@@ -55,6 +58,7 @@
     display:flex;
     justify-content:space-evenly;
     flex-wrap: wrap;
+    background-image: url("no.jpg");
 }
 
 .train-status .box{
@@ -77,7 +81,7 @@
 }
 .train-status h1 {
     margin-top: 10px;
-    color: green;
+    color: white;
     margin-bottom : 10px;
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -87,6 +91,7 @@
     padding: 5px;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
+    color:white;
 }
 
 ::-webkit-scrollbar{
